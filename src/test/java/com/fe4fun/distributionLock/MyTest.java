@@ -1,6 +1,7 @@
 package com.fe4fun.distributionLock;
 
 import com.fe4fun.distributionLock.lock.MyDistributionLock;
+import com.fe4fun.distributionLock.service.MyService;
 import org.junit.Test;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -14,6 +15,9 @@ public class MyTest extends BaseTest{
 
     @Resource
     private MyDistributionLock myDistributionLock;
+
+    @Resource
+    private MyService myService;
 
     @Test
     public void test1() {
@@ -64,5 +68,10 @@ public class MyTest extends BaseTest{
         myDistributionLock.unlock(key, UUID.randomUUID().toString());
         // 第二次解锁，预期成功
         myDistributionLock.unlock(key, value);
+    }
+
+    @Test
+    public void testService() {
+        myService.execute("abc", 123L);
     }
 }

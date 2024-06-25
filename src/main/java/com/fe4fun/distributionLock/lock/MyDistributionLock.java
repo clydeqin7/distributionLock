@@ -46,21 +46,21 @@ public class MyDistributionLock {
 
     public boolean tryLock(String key, String value, long expireTime, long waitTime) {
         long start = System.currentTimeMillis();
-        // 自旋，直到获取锁
+        // 自旋, 直到超过等待时长
         while (true) {
             System.out.println("尝试获取分布式锁");
-            if (Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, value, expireTime, TimeUnit.MICROSECONDS))) {
+            if (Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, value, expireTime, TimeUnit.MILLISECONDS))) {
                 System.out.println("获取分布式锁-成功");
                 return true;
             } else {
-                System.out.println("获取分布式锁-失败, 等待下一次获取");
+                System.out.println("获取分布式锁-失败，等待下一次获取");
             }
             if (System.currentTimeMillis() - start > waitTime) {
                 System.out.println("超过等待时长，获取分布式锁-失败");
                 return false;
             }
             // 阻塞等待一段时间
-            LockSupport.parkNanos(this, TimeUnit.MICROSECONDS.toNanos(1000));
+            LockSupport.parkNanos(this, TimeUnit.MILLISECONDS.toNanos(1000));
         }
     }
 
